@@ -1,7 +1,9 @@
 ﻿// Работа с векторами и радиусами цилиндров.
 
 #include <iostream>
+#include <string>
 #include <corecrt_math_defines.h>
+using namespace std;
 
 class Radius {
 private:
@@ -50,9 +52,11 @@ class Vector {
 protected: double X;
 protected: double Y;
 protected: double Z;
-protected: Radius cylinderRadius;
+//private: Radius cylinderRadius;
 public:
 	static int countOfVectors;
+	friend void operator <<(ostream& o, Vector sp);
+	friend Vector operator >>(istream& i, Vector& r);
 
 	Vector()
 	{
@@ -60,15 +64,15 @@ public:
 		X = 0;
 		Y = 0;
 		Z = 0;
-		cylinderRadius = rad;
+		//cylinderRadius = rad;
 		Vector::countOfVectors++;
 	}
-	Vector(double X, double y, double z, Radius rad)
+	Vector(double X, double y, double z)
 	{
 		this->X = X;
 		this->Y = y;
 		this->Z = z;
-		this->cylinderRadius = rad;
+		//this->cylinderRadius = rad;
 		Vector::countOfVectors++;
 	}
 
@@ -78,7 +82,7 @@ public:
 		this->X = n;
 		this->Y = n;
 		this->Z = n;
-		this->cylinderRadius = rad;
+		//this->cylinderRadius = rad;
 		Vector::countOfVectors++;
 	}
 
@@ -87,7 +91,7 @@ public:
 		this->X = vector.X * 2;
 		this->Y = vector.Y * 2;
 		this->Z = vector.Z * 2;
-		this->cylinderRadius = vector.cylinderRadius;
+		//this->cylinderRadius = vector.cylinderRadius;
 	}
 
 	~Vector() { if (Vector::countOfVectors > 0) Vector::countOfVectors--; }
@@ -97,11 +101,15 @@ public:
 		return Vector::countOfVectors;
 	}
 
+	double getX() { return this->X; }
+	double getY() { return this->Y; }
+	double getZ() { return this->Z; }
+
 	void read()
 	{
 		std::cin >> this->X >> this->Y >> this->Z;
-		this->cylinderRadius.readRadius();
-		if (X < -100 || X > 100 || Y < -100 || Y > 100 || Z < -100 || Z > 100 || cylinderRadius.returnRadius() < -100 || cylinderRadius.returnRadius() > 100)
+		//this->cylinderRadius.readRadius();
+		if (X < -100 || X > 100 || Y < -100 || Y > 100 || Z < -100 || Z > 100)
 			throw 0;
 	}
 
@@ -109,7 +117,7 @@ public:
 	{
 		std::cout << this->X << "; " << this->Y << "; " << this->Z;
 		std::cout << ", радиус = ";
-		cylinderRadius.displayRadius();
+		//cylinderRadius.displayRadius();
 	}
 
 	Vector add(Vector vector)
@@ -118,7 +126,7 @@ public:
 		c.X = this->X + vector.X;
 		c.Y = this->Y + vector.Y;
 		c.Z = this->Z + vector.Z;
-		c.cylinderRadius.addRadius(this->cylinderRadius, vector.cylinderRadius);
+		//c.cylinderRadius.addRadius(this->cylinderRadius, vector.cylinderRadius);
 		return c;
 	}
 
@@ -145,15 +153,13 @@ public:
 		return scalar;
 	}
 
-	friend double cylinderVolume(Vector vector);
-
 	Vector operator+(Vector vector)
 	{
 		Vector c;
 		c.X = this->X + vector.X;
 		c.Y = this->Y + vector.Y;
 		c.Z = this->Z + vector.Z;
-		c.cylinderRadius.addRadius(this->cylinderRadius, vector.cylinderRadius);
+		//c.cylinderRadius.addRadius(this->cylinderRadius, vector.cylinderRadius);
 		return c;
 	}
 
@@ -162,7 +168,7 @@ public:
 		this->X = vector.X;
 		this->Y = vector.Y;
 		this->Z = vector.Z;
-		this->cylinderRadius = vector.cylinderRadius;
+		//this->cylinderRadius = vector.cylinderRadius;
 		return *this;
 	}
 
@@ -171,7 +177,7 @@ public:
 		this->X++;
 		this->Y++;
 		this->Z++;
-		this->cylinderRadius++;
+		//this->cylinderRadius++;
 		return *this;
 	}
 
@@ -183,29 +189,64 @@ public:
 	}
 };
 
-class Sphere: public Vector
+class Cylinder: public Vector
 {
+private: double height;
+public: static int countOfCylinder;
+	  Cylinder(double X, double Y, double Z, double h) : Vector(X, Y, Z) { height = h; }
+	friend void operator <<(ostream& o, Cylinder sp);
+	friend Cylinder operator >>(istream& i, Cylinder& r);
+
+
 	double Volume()
 	{
-		double volume = length() * length() * length() * (4 / 3) * M_PI;
+		double volume = height * length() * length() * M_PI;
 		return volume;
 	}
-	Sphere(double X, double y, double z, Radius rad)
+	static int getCountOfSphere()
 	{
-		Vector(X, Y, Z, rad);
-		Vector::countOfVectors++;
+		return Cylinder::countOfCylinder++;
 	}
 
+	void operator =(Vector vector)
+	{
+		this->X = vector.getX();
+		this->Y = vector.getY();
+		this->Z = vector.getZ();
+		this->X = vector.getX();
+	}
 };
 
 int Vector::countOfVectors = 0;
+int Cylinder::countOfCylinder = 0;
 
-double cylinderVolume(Vector vector)
+//double cylinderVolume(Vector vector)
+//{
+//	double volume = vector.cylinderRadius.returnRadius() * vector.cylinderRadius.returnRadius() * vector.length() * M_PI;
+//	return volume;
+//}
+
+void operator << (ostream& o, Vector v)
 {
-	double volume = vector.cylinderRadius.returnRadius() * vector.cylinderRadius.returnRadius() * vector.length() * M_PI;
-	return volume;
+	cout << v.X << " " << v.Y << " " << v.Z;
 }
 
+Vector operator >> (istream& o, Vector& v)
+{
+	cin >> v.X >> v.Y >> v.Z;
+	return v;
+}
+
+void operator << (ostream& o, Cylinder sp)
+{
+	cout << sp.X << " " << sp.Y << " " << sp.Z << " " << sp.height;
+}
+
+Cylinder operator >> (istream& o, Cylinder& sp)
+{
+	cin >> sp.X >> sp.Y >> sp.Z >> sp.height;
+	return sp;
+}
 
 int main()
 {
@@ -214,8 +255,8 @@ int main()
 	int length_str = str.length();
 	std::cout << str << "Длина строки " << length_str << "\n";
 	Vector a, c;
-	Radius rad(1.5);
-	Vector b(1, 0, -2, rad);
+	//Radius rad(1.5);
+	Vector b(1, 0, -2);
 	printf("Количество созданных векторов: %d\n", Vector::getCountOfVectors());
 
 	bool p = false;
@@ -249,7 +290,7 @@ int main()
 	++b;
 	b.display();
 	puts("");
-	double length1 = 0;
+	/*double length1 = 0;
 	double length2 = 0;
 	a.length(&length1);
 	a.length(&length2);
@@ -356,6 +397,8 @@ int main()
 
 	printf("\nДлина вектора a равна %g\n", din_mas_obj[0].length());
 	printf("Скалярное произведение векторов a и b равно %g\n", din_mas_obj[0].scalar(din_mas_obj[1]));
-	delete[] din_mas_obj;
+	delete[] din_mas_obj;*/
+	Cylinder sp(1, 3, 2, 2);
+	sp = b;
 	return 0;
 }
