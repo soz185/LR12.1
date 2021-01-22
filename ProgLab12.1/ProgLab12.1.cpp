@@ -153,6 +153,11 @@ public:
 		return scalar;
 	}
 
+	virtual double Volume()
+	{
+		return 0;
+	}
+
 	Vector operator+(Vector vector)
 	{
 		Vector c;
@@ -193,6 +198,7 @@ class Cylinder: public Vector
 {
 private: double height;
 public: static int countOfCylinder;
+	  Cylinder() : Vector(0, 0, 0) { height = 0; }
 	  Cylinder(double X, double Y, double Z, double h) : Vector(X, Y, Z) { height = h; }
 	friend void operator <<(ostream& o, Cylinder sp);
 	friend Cylinder operator >>(istream& i, Cylinder& r);
@@ -213,7 +219,6 @@ public: static int countOfCylinder;
 		this->X = vector.getX();
 		this->Y = vector.getY();
 		this->Z = vector.getZ();
-		this->X = vector.getX();
 	}
 };
 
@@ -266,7 +271,7 @@ int main()
 		try
 		{
 			printf("Введите координаты и радиус a [-100;100]: ");
-			a.read();
+			cin >> a;
 		}
 		catch (...)
 		{
@@ -277,18 +282,18 @@ int main()
 
 	printf("Цилиндры:\n");
 	printf("a ");
-	a.display();
+	cout << a;
 	puts("");
 	printf("b ");
-	b.display();
+	cout << b;
 	puts("");
 
 	b++;
-	b.display();
+	cout << b;
 	puts("");
 
 	++b;
-	b.display();
+	cout << b;
 	puts("");
 	/*double length1 = 0;
 	double length2 = 0;
@@ -303,11 +308,11 @@ int main()
 
 	Vector arr[3] = { 1, 2, 3 };
 	printf("arr[0] ");
-	arr[0].display();
+	cin >> arr[0];
 	puts("");
 	Vector arrCopy = arr[0];
 	printf("arrCopy ");
-	arrCopy.display();
+	cout << arrCopy;
 	puts("");
 
 	Vector arrayVector[][2] = { { 1, 2}, { 3, 4 } };
@@ -315,7 +320,7 @@ int main()
 		for (int j = 0; j < 2; j++)
 		{
 			arrayVector[i][j]++;
-			arrayVector[i][j].display();
+			cout << arrayVector[i][j];
 			puts("");
 		}
 	printf("Динамические переменные.\n");
@@ -400,5 +405,14 @@ int main()
 	delete[] din_mas_obj;*/
 	Cylinder sp(1, 3, 2, 2);
 	sp = b;
+	cout << b.Volume() << "\n";
+	cout << sp.Volume() << "\n";
+
+	Vector* vector = new Vector(0, 2, 3);
+	Cylinder* cylinder = new Cylinder(1, 2, 3, 4);
+	vector = cylinder;
+	cout << vector->Volume() << "\n";
+	cout << cylinder->Volume() << "\n";
+
 	return 0;
 }
