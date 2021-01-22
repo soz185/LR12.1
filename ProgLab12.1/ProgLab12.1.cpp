@@ -225,12 +225,20 @@ public: static int countOfCylinder;
 int Vector::countOfVectors = 0;
 int Cylinder::countOfCylinder = 0;
 
-//double cylinderVolume(Vector vector)
-//{
-//	double volume = vector.cylinderRadius.returnRadius() * vector.cylinderRadius.returnRadius() * vector.length() * M_PI;
-//	return volume;
-//}
+class Figure
+{
+protected: virtual void ReturnName() = 0;
+};
 
+class Circle :public Figure
+{
+public: void ReturnName() { cout << "Круг"; }
+};
+
+class Square :public Figure
+{
+public: void ReturnName() { cout << "Квадрат"; }
+};
 void operator << (ostream& o, Vector v)
 {
 	cout << v.X << " " << v.Y << " " << v.Z;
@@ -414,5 +422,11 @@ int main()
 	cout << vector->Volume() << "\n";
 	cout << cylinder->Volume() << "\n";
 
+	Circle circle;
+	Square square;
+	circle.ReturnName();
+	puts("");
+	square.ReturnName();
+	puts("");
 	return 0;
 }
